@@ -34,20 +34,6 @@
               "rules": []
             },
             {
-                "type": "text",
-                "label": "Email address 1",
-                "isMandatory": true,
-                "unique_id": "text_2",
-                "rules": []
-            },
-            {
-                "type": "text",
-                "label": "Email address 2",
-                "isMandatory": true,
-                "unique_id": "text_2",
-                "rules": []
-            },
-            {
               "type": "formattednumeric",
               "label": "Phone Number",
               "keyboard": "numeric",

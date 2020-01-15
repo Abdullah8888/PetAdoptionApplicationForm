@@ -15,4 +15,7 @@ extension Notification.Name {
     static let didFillFirstPageFailed = Notification.Name("didFillFirstPageFailed")
     static let didEndPage = Notification.Name("didEndPage")
     static let noPreviousPage = Notification.Name("noPreviousPage")
+    static let didValidationFailed = Notification.Name("didValidationFailed")
+    static let didValidationSuccess = Notification.Name("didValidationSuccess")
+    static let phoneNumberFailed = Notification.Name("phoneNumberFailed")
 }

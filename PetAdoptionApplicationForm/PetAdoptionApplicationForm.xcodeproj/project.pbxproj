@@ -18,7 +18,8 @@
 		C98FF36223CA6F26005FC56A /* pet_adoption.json in Resources */ = {isa = PBXBuildFile; fileRef = C98FF36123CA6F26005FC56A /* pet_adoption.json */; };
 		C98FF36523CA742D005FC56A /* PAExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98FF36423CA742D005FC56A /* PAExtensions.swift */; };
 		C98FF36923CA76AB005FC56A /* PAMainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98FF36823CA76AB005FC56A /* PAMainViewModel.swift */; };
-		C9951FD823CC7DB900E31008 /* GenericViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9951FD723CC7DB900E31008 /* GenericViews.swift */; };
+		C9951FD823CC7DB900E31008 /* BaseViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9951FD723CC7DB900E31008 /* BaseViews.swift */; };
+		C995200823CF239200E31008 /* PAViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C995200723CF239200E31008 /* PAViewManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,7 +51,8 @@
 		C98FF36123CA6F26005FC56A /* pet_adoption.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = pet_adoption.json; sourceTree = "<group>"; };
 		C98FF36423CA742D005FC56A /* PAExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PAExtensions.swift; sourceTree = "<group>"; };
 		C98FF36823CA76AB005FC56A /* PAMainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PAMainViewModel.swift; sourceTree = "<group>"; };
-		C9951FD723CC7DB900E31008 /* GenericViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericViews.swift; sourceTree = "<group>"; };
+		C9951FD723CC7DB900E31008 /* BaseViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViews.swift; sourceTree = "<group>"; };
+		C995200723CF239200E31008 /* PAViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PAViewManager.swift; sourceTree = "<group>"; };
 		D2245BA29001047AFB47102F /* Pods-PetAdoptionApplicationForm.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PetAdoptionApplicationForm.release.xcconfig"; path = "Target Support Files/Pods-PetAdoptionApplicationForm/Pods-PetAdoptionApplicationForm.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,6 +120,7 @@
 		C98FF34023CA63B8005FC56A /* PetAdoptionApplicationForm */ = {
 			isa = PBXGroup;
 			children = (
+				C995200623CF232F00E31008 /* PAViewManager */,
 				C98FF36323CA73DC005FC56A /* shared */,
 				C98FF36623CA753A005FC56A /* Service */,
 				C98FF36A23CA780A005FC56A /* PAMainViewController */,
@@ -142,7 +145,7 @@
 			isa = PBXGroup;
 			children = (
 				C98FF36423CA742D005FC56A /* PAExtensions.swift */,
-				C9951FD723CC7DB900E31008 /* GenericViews.swift */,
+				C9951FD723CC7DB900E31008 /* BaseViews.swift */,
 			);
 			path = shared;
 			sourceTree = "<group>";
@@ -170,6 +173,14 @@
 				C98FF34523CA63B8005FC56A /* Main.storyboard */,
 			);
 			path = PAMainViewController;
+			sourceTree = "<group>";
+		};
+		C995200623CF232F00E31008 /* PAViewManager */ = {
+			isa = PBXGroup;
+			children = (
+				C995200723CF239200E31008 /* PAViewManager.swift */,
+			);
+			path = PAViewManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -345,7 +356,8 @@
 				C98FF34423CA63B8005FC56A /* PAMainViewController.swift in Sources */,
 				C98FF34223CA63B8005FC56A /* AppDelegate.swift in Sources */,
 				C98FF36523CA742D005FC56A /* PAExtensions.swift in Sources */,
-				C9951FD823CC7DB900E31008 /* GenericViews.swift in Sources */,
+				C9951FD823CC7DB900E31008 /* BaseViews.swift in Sources */,
+				C995200823CF239200E31008 /* PAViewManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -32,13 +32,18 @@ class PAMainViewController: BaseViews, UITableViewDataSource, UITableViewDelegat
     
     private let btnNext  = UIButton(frame: CGRect(x: 100, y: 100, width: 100, height: 50))
     private let btnPrevious  = UIButton(frame: CGRect(x: 100, y: 100, width: 100, height: 50))
+    private let goBackHome  = UIButton(frame: CGRect(x: 100, y: 100, width: 100, height: 50))
+    
     private var applicationDetails: JSON = []
+    
+    private var isYesNoClicked = false
     
     private let tableView = UITableView()
     private var currentPage = 0
     private var istherePage = true
     private var isPageExit = false
     private let model = PAMainViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         applicationDetails = model.getApplicationDetails()
@@ -48,6 +53,10 @@ class PAMainViewController: BaseViews, UITableViewDataSource, UITableViewDelegat
         self.view.backgroundColor = self.hexStringToUIColor(hex: "#016A65")
         NotificationCenter.default.addObserver(self, selector: #selector(didEndPage), name: Notification.Name.didEndPage, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(noPreviousPage), name: Notification.Name.noPreviousPage, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(displayFailed), name: Notification.Name.didValidationFailed, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(displaySuccess), name: Notification.Name.didValidationSuccess, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(verifyPhoneNuber), name: Notification.Name.phoneNumberFailed, object: nil)
+        
     }
     
     func header(title: String)  {
@@ -68,8 +77,6 @@ class PAMainViewController: BaseViews, UITableViewDataSource, UITableViewDelegat
     }
     
     func setUpTableView() {
-        //tableView.layer.borderWidth = 3.0
-        //tableView.layer.borderColor = UIColor.brown
         tableView.backgroundColor = self.hexStringToUIColor(hex: "#016A65")
         tableView.separatorColor = UIColor.clear
         tableView.delegate = self
@@ -87,14 +94,8 @@ class PAMainViewController: BaseViews, UITableViewDataSource, UITableViewDelegat
         tableView.bottomAnchor.constraint(equalTo: parentView.bottomAnchor).isActive = true
         
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: String(currentPage))
+        
     }
-    
-    //Mark UITextFieldDelegate
-//    func textFieldDidEndEditing(_ textField: UITextField) {
-//        cell = tableView.cellForRow(at: IndexPath.init(row: 2, section: 0))
-//        var dd = cell?.subviews.first as? UITextField
-//        print("the third is, \(dd?.text)")
-//    }
     
     func formatNumeric() {
         
@@ -115,7 +116,6 @@ class PAMainViewController: BaseViews, UITableViewDataSource, UITableViewDelegat
         }
         else if String(currentPage) == "2"{
             row = self.applicationDetails["pages"][currentPage]["sections"][sectionIndex]["elements"].arrayValue.count
-            print("the row countis , \(row)")
         }
         return row
     }
@@ -132,22 +132,27 @@ class PAMainViewController: BaseViews, UITableViewDataSource, UITableViewDelegat
         let sectionIndex = currentPage == 0 ? 1 : 0
         let view = self.createViews(type: applicationDetails["pages"][currentPage]["sections"][sectionIndex]["elements"][pos]["type"].stringValue)
         if let textField = view as? UITextField {
-            self.textFieldSetUp(textField, cell, pos)
+            if currentPage == 0 {
+                PAViewManager.firstPagetextFields.append(textField)
+            }
+            else if currentPage == 1 {
+                PAViewManager.secondPagetextFields.append(textField)
+            }
+            else if currentPage == 2 {
+                PAViewManager.thirdPagetextFields.append(textField)
+            }
+            
+           self.textFieldSetUp(textField, cell, pos)
         }
         else if let datePicker = view as? UIDatePicker {
-            self.dataPickerSetUp(datePicker, cell)
+            self.dataPickerSetUp(datePicker, cell, pos)
         }
         else if let button = view as? UIButton {
             self.radioButton(button, cell, sectionIndex, pos)
         }
-    }
-    
-    func hideTextField() {
-        let dd = tableView.cellForRow(at: IndexPath.init(row: 1, section: 0))
-        let ddd = dd?.contentView.subviews[1] as? UITextView
-        print("the stuff is \(ddd) and \(dd)")
         
     }
+    
     
     func textFieldSetUp(_ textField: UITextField, _ cell: UITableViewCell, _ pos: Int) {
         let sectionIndex = currentPage == 0 ? 1 : 0
@@ -157,7 +162,9 @@ class PAMainViewController: BaseViews, UITableViewDataSource, UITableViewDelegat
         textField.frame.size.width = 200
         textField.tag = pos
         textField.borderStyle = .roundedRect
-        
+        if currentPage == 1 && PAViewManager.secondPagetextFields[0].tag == 1 {
+                PAViewManager.secondPagetextFields[0].isHidden = true
+        }
         cell.contentView.addSubview(textField)
         textField.translatesAutoresizingMaskIntoConstraints = false
         
@@ -166,14 +173,15 @@ class PAMainViewController: BaseViews, UITableViewDataSource, UITableViewDelegat
         cell.rightAnchor.constraint(equalTo: textField.rightAnchor, constant: 20).isActive = true
     }
     
-    func dataPickerSetUp(_ datePicker: UIDatePicker, _ cell: UITableViewCell) {
+    func dataPickerSetUp(_ datePicker: UIDatePicker, _ cell: UITableViewCell, _ pos: Int) {
         let dobLabel = UILabel()
         dobLabel.text = "Date of Birth"
-        //dobLabel.textAlignment = .left
         dobLabel.font = UIFont(name: "HelveticaNeue-light", size: 14)
         dobLabel.lineBreakMode = .byWordWrapping
         dobLabel.numberOfLines = 1
         dobLabel.textColor = UIColor.white
+        datePicker.tag = pos
+        PAViewManager.firstPageDatePickers.append(datePicker)
         
         datePicker.datePickerMode = .date
         datePicker.backgroundColor = UIColor.white
@@ -381,8 +389,13 @@ extension PAMainViewController {
             if currentPage < (self.applicationDetails["pages"].arrayValue.count - 1) {
    
                 if currentPage == 0 {
+                    PAViewManager.firstPagetextFields.removeAll()
+                    PAViewManager.firstPageDatePickers.removeAll()
                     isPageExit = false
                     mainView(applicationDetails: applicationDetails)
+                }
+                else if currentPage == 1 {
+                    PAViewManager.secondPagetextFields.removeAll()
                 }
                 pageTitle(applicationDetails: self.applicationDetails)
                 setUpTableView()
@@ -390,7 +403,6 @@ extension PAMainViewController {
                 tableView.reloadData()
                 submitBtn.removeFromSuperview()
                 
-                //parentView.bottomAnchor.constraint(equalTo: navigationStackView.topAnchor, constant: 100).isActive = true
                 
             }
         }
@@ -402,21 +414,21 @@ extension PAMainViewController {
     }
     
     @objc func nextAction(sender: UIButton) {
+       
         if istherePage {
             isPageExit = true
             parentView.subviews.forEach( {$0.removeFromSuperview()})
             currentPage = currentPage + 1
             if currentPage < (self.applicationDetails["pages"].arrayValue.count - 1) {
+                PAViewManager.secondPagetextFields.removeAll()
                 pageTitle(applicationDetails: self.applicationDetails)
                 setUpTableView()
                 tableView.register(UITableViewCell.self, forCellReuseIdentifier: String(currentPage))
                 tableView.reloadData()
-                
-                
-                //self.hideTextField()
 
             }
             else if currentPage == (self.applicationDetails["pages"].arrayValue.count - 1) {
+                PAViewManager.thirdPagetextFields.removeAll()
                 pageTitle(applicationDetails: self.applicationDetails)
                 setUpTableView()
                 tableView.register(UITableViewCell.self, forCellReuseIdentifier: String(currentPage))
@@ -424,21 +436,14 @@ extension PAMainViewController {
 
                 istherePage = false
                 submitBtnView()
-                //parentView.translatesAutoresizingMaskIntoConstraints = false
                 parentView.bottomAnchor.constraint(equalTo: submitBtn.topAnchor, constant: 70).isActive = true
-                print("the last, \(currentPage)")
+
             }
            
         }
         else {
             NotificationCenter.default.post(name: Notification.Name.didEndPage, object: self)
         }
-//       for i in 0...3 {
-//        cell = tableView.cellForRow(at: IndexPath.init(row: i, section: 0))
-//        if let ss = cell?.contentView.subviews[0] as? UITextField {
-//            print("the cell is \(ss.text)")
-//        }
-//    }
         
     }
     
@@ -452,7 +457,7 @@ extension PAMainViewController {
             RKDropdownAlert.title(title, message: message, backgroundColor: UIColor.red, textColor: UIColor.white, time: 2)
         }
         else{
-            RKDropdownAlert.title(title, message: message, backgroundColor: hexStringToUIColor(hex: "#016A65"), textColor: UIColor.white, time: 2)
+            RKDropdownAlert.title(title, message: message, backgroundColor: UIColor.green, textColor: UIColor.white, time: 2)
         }
         
     }
@@ -465,11 +470,16 @@ extension PAMainViewController {
 extension PAMainViewController {
     
     @objc func yesAction(sender: UIButton) {
-        print("display textField")
+        if PAViewManager.secondPagetextFields[0].tag == 1 {
+            PAViewManager.secondPagetextFields[0].isHidden = false
+        }
+        isYesNoClicked = true
     }
     
     @objc func noAction(sender: UIButton) {
-        print("hide textField")
+        if PAViewManager.secondPagetextFields[0].tag == 1{
+            PAViewManager.secondPagetextFields[0].isHidden = true
+        }
     }
 }
 //End of Second Page UIViews
@@ -492,8 +502,110 @@ extension PAMainViewController {
     }
     
     @objc func submitAction(sender: UIButton) {
-        print("gonna validate here")
+        validate()
     }
+    
+    func validate() {
+        let dateFormatter = DateFormatter()
+        var phoneNumber : UITextField?
+        dateFormatter.dateFormat = "yyyy"
+        var check1 = false
+        var check2 = false
+        var check3 = false
+        var check4 = false
+        var checkForNumeric = false
+        
+        PAViewManager.firstPagetextFields.forEach({ print($0.tag) })
+        PAViewManager.secondPagetextFields.forEach({ print($0.tag) })
+        PAViewManager.thirdPagetextFields.forEach({ print($0.tag) })
+    
+        PAViewManager.firstPageDatePickers.forEach({ print($0.date) })
+        for textField in PAViewManager.firstPagetextFields {
+            if textField.tag == 2 {
+                phoneNumber = textField
+                break
+            }
+        }
+        let phoneArray = Array((phoneNumber?.text!)!)
+        for ch in phoneArray {
+            if !ch.isNumber {
+                checkForNumeric = true
+                break
+            }
+        }
+        for textField in PAViewManager.firstPagetextFields {
+            if textField.text!.isEmpty {
+                check1 = true
+                break
+            }
+        }
+        for textField2 in PAViewManager.secondPagetextFields {
+            if textField2.text!.isEmpty {
+                check2 = true
+                break
+            }
+        }
+        for textField3 in PAViewManager.thirdPagetextFields {
+            if textField3.text!.isEmpty {
+                check3 = true
+                break
+            }
+        }
+        for datePicker in PAViewManager.firstPageDatePickers {
+            let year = dateFormatter.string(from: datePicker.date)
+            if year.isEmpty {
+                check4 = true
+                break
+            }
+        }
+        
+        
+        if checkForNumeric {
+            NotificationCenter.default.post(name: Notification.Name.phoneNumberFailed, object: self)
+        }
+        else if !check1 && check2 && !check3 && !check4 && isYesNoClicked {
+            NotificationCenter.default.post(name: Notification.Name.didValidationSuccess, object: self)
+        }
+        // if text_3 (i.e check2) is not empty
+        else if !check1 && !check2 && !check3 && !check4 && isYesNoClicked {
+            NotificationCenter.default.post(name: Notification.Name.didValidationSuccess, object: self)
+        }
+        else {
+            NotificationCenter.default.post(name: Notification.Name.didValidationFailed, object: self)
+        }
+        
+    }
+    
+    @objc func verifyPhoneNuber (notification: Notification) {
+        let sender = notification.object
+        
+        guard sender as? PAMainViewController != nil else {
+            return
+        }
+        
+        self.displayDropDownAlertWithTitle(title: "Failed", message: "Phone number verification failed", error: true)
+    }
+    
+    @objc func displaySuccess(notification: Notification) {
+        let sender = notification.object
+        
+        guard sender as? PAMainViewController != nil else {
+            return
+        }
+        
+        self.displayDropDownAlertWithTitle(title: "Success", message: "Succesfully validated", error: false)
+    }
+    
+    @objc func displayFailed(notification: Notification) {
+        let sender = notification.object
+        
+        guard sender as? PAMainViewController != nil else {
+            return
+        }
+        
+        self.displayDropDownAlertWithTitle(title: "Failed", message: "Wrong validation, please make you completely filled the form", error: true)
+    }
+    
 }
 //End of Third Page UIViews
 
