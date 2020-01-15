@@ -1,0 +1,26 @@
+PODS:
+  - RKDropdownAlert (0.3.0)
+  - SDWebImage (4.4.7):
+    - SDWebImage/Core (= 4.4.7)
+  - SDWebImage/Core (4.4.7)
+  - SwiftyJSON (5.0.0)
+
+DEPENDENCIES:
+  - RKDropdownAlert (~> 0.3)
+  - SDWebImage (~> 4.0)
+  - SwiftyJSON
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - RKDropdownAlert
+    - SDWebImage
+    - SwiftyJSON
+
+SPEC CHECKSUMS:
+  RKDropdownAlert: f4b3364c251829ad439dc666836a1f2dad26f4c7
+  SDWebImage: c10d14a8883ebd89664f02a422006f66a85c0c5d
+  SwiftyJSON: 36413e04c44ee145039d332b4f4e2d3e8d6c4db7
+
+PODFILE CHECKSUM: fb04425b0e084e77f5eccdc759d5420065457a47
+
+COCOAPODS: 1.7.5

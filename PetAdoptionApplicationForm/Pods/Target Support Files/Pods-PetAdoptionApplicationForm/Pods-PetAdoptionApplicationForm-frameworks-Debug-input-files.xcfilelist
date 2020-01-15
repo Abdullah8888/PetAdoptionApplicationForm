@@ -1,0 +1,4 @@
+${PODS_ROOT}/Target Support Files/Pods-PetAdoptionApplicationForm/Pods-PetAdoptionApplicationForm-frameworks.sh
+${BUILT_PRODUCTS_DIR}/RKDropdownAlert/RKDropdownAlert.framework
+${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework
+${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework

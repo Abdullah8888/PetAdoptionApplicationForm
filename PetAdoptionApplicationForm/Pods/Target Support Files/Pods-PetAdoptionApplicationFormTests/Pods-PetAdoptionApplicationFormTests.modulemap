@@ -1,0 +1,6 @@
+framework module Pods_PetAdoptionApplicationFormTests {
+  umbrella header "Pods-PetAdoptionApplicationFormTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
